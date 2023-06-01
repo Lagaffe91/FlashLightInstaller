@@ -8,8 +8,8 @@
 /// <summary>
 /// Download and parse github html to retrive the filename of the latest NorthStar release.
 /// </summary>
-/// <returns></returns>
-LPCWSTR GetDownloadURL()
+/// <returns>LPCWSTR : Direct link to the latest release of NorthStar.</returns>
+std::string GetDownloadURL()
 {
 	IStream* fileStream;
 	HRESULT downloadResult = URLOpenBlockingStream(NULL, L"https://github.com/R2Northstar/Northstar/releases/latest/", &fileStream, 0, NULL);
@@ -28,22 +28,25 @@ LPCWSTR GetDownloadURL()
 	fileStream->Read(&htmlStr[0], stringSize, &byteCount);
 	fileStream->Release();
 
-	constexpr int searchStringSize = 41; //size of -> "/R2Northstar/Northstar/releases/download/"
-	const int linkOffset = htmlStr.find("/R2Northstar/Northstar/releases/download/", 0);
+	//We are looking for this kind of string "R2Northstar/Northstar/releases/download/v1.14.2/Northstar.release.v1.14.2.zip" to retrive current the file name
 
-	//htmlStr.s
+	int fileExtentionOffset = htmlStr.find(".zip"); //There is only one occurence of ".zip" in the html
 
-	return L"";
+	std::string fileName = "";
+
+	return "https://github.com/R2Northstar/Northstar/releases/latest/download/" + fileName;
 }
 
 /// <summary>
 /// Download and write the file at url pFileURL onto the disk.
 /// </summary>
 /// <param name="pFileURL"> : Url of the desired file.</param>
-void DownloadFile(LPCWSTR pFileURL)
+void DownloadFile(const std::string& pFileURL)
 {
+	std::wstring wURL(pFileURL.begin(), pFileURL.end());
+
 	IStream* fileStream;
-	HRESULT downloadResult = URLOpenBlockingStream(NULL, pFileURL, &fileStream, 0, NULL);
+	HRESULT downloadResult = URLOpenBlockingStream(NULL, wURL.c_str(), &fileStream, 0, NULL);
 
 	if (!SUCCEEDED(downloadResult))
 		return;
@@ -62,9 +65,7 @@ void DownloadFile(LPCWSTR pFileURL)
 
 	fileStream->Release();
 
-	//Write file
-	std::wstring fileName(pFileURL);
-	PathStripPath(&fileName[0]);
+	PathStripPath(&wURL[0]);
 
 	HANDLE zipHandle = CreateFileA("./Northstar.release.v1.14.2.zip", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -76,7 +77,9 @@ void DownloadFile(LPCWSTR pFileURL)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-	DownloadFile(L"https://github.com/R2Northstar/Northstar/releases/latest/download/Northstar.release.v1.14.2.zip");
+	std::string downloadURL = GetDownloadURL();
+	
+	DownloadFile(downloadURL);
 
 	return 0;
 }
