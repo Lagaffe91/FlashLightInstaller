@@ -1,18 +1,17 @@
 #include <Windows.h>
-#include <shlwapi.h>
 #include <urlmon.h>
 
 #include <sstream>
 #include <vector>
 
 /// <summary>
-/// Download and parse github html to retrive the filename of the latest NorthStar release.
+/// Use GitHub api to retrive the direct link to the latest release of NorthStar.
 /// </summary>
 /// <returns>LPCWSTR : Direct link to the latest release of NorthStar.</returns>
 std::string GetDownloadURL()
 {
 	IStream* fileStream;
-	HRESULT downloadResult = URLOpenBlockingStream(NULL, L"https://github.com/R2Northstar/Northstar/releases/latest/", &fileStream, 0, NULL);
+	HRESULT downloadResult = URLOpenBlockingStream(NULL, L"https://api.github.com/repos/R2Northstar/northstar/releases/latest", &fileStream, 0, NULL);
 
 	STATSTG streamStats{};
 
@@ -21,20 +20,20 @@ std::string GetDownloadURL()
 	DWORD stringSize = streamStats.cbSize.LowPart;
 
 	std::string htmlStr;
+
 	htmlStr.reserve(stringSize);
+	htmlStr.resize(stringSize);
 
 	DWORD byteCount;
 
 	fileStream->Read(&htmlStr[0], stringSize, &byteCount);
 	fileStream->Release();
 
-	//We are looking for this kind of string "R2Northstar/Northstar/releases/download/v1.14.2/Northstar.release.v1.14.2.zip" to retrive current the file name
-
-	int fileExtentionOffset = htmlStr.find(".zip"); //There is only one occurence of ".zip" in the html
-
-	std::string fileName = "";
-
-	return "https://github.com/R2Northstar/Northstar/releases/latest/download/" + fileName;
+	constexpr int searchStrSize = 23;
+	int urlOffset	= htmlStr.find("\"browser_download_url\":") + searchStrSize;
+	int urlStrSize  = (htmlStr.find(".zip\"", urlOffset) - urlOffset) + 4 ; // 4 -> ".zip"
+	
+	return htmlStr.substr(urlOffset, urlStrSize);
 }
 
 /// <summary>
@@ -64,8 +63,8 @@ void DownloadFile(const std::string& pFileURL)
 	fileStream->Read(fileBuffer.data(), fileSize, &byteCount);
 
 	fileStream->Release();
-
-	PathStripPath(&wURL[0]);
+	
+	//Get filename with PathStripPath(&wURL[0]);
 
 	HANDLE zipHandle = CreateFileA("./Northstar.release.v1.14.2.zip", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
