@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <urlmon.h>
+#include <shlwapi.h>
 
 #include <sstream>
 #include <vector>
@@ -64,11 +65,11 @@ void DownloadFile(const std::string& pFileURL)
 
 	fileStream->Release();
 	
-	//TODO :
-	//Get filename with :
-	//	PathStripPath(&wURL[0]);
+	PathStripPath(&wURL[0]);
 
-	HANDLE zipHandle = CreateFileA("./Northstar.release.v1.14.2.zip", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	std::string fileName(wURL.begin(), wURL.end());
+
+	HANDLE zipHandle = CreateFileA(&fileName[0], GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	WriteFile(zipHandle, fileBuffer.data(), fileSize, &byteCount, NULL);
 
