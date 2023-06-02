@@ -6,12 +6,21 @@
 
 Lightweight installer for the Northstar Launcher made with the win32 api.
 
+## STATUS (READ BEFORE USE)
+
+Currently the installer is just downloading the latest release of Northstar. You still have to extract it by hand (which defeat the purpose of the installer)..
+
+But i'm working on it.
+
+In the future, a small GUI is planned to show the installation progress.
+
 ## Usage
 
 To install or Update Northstar :
 
 - Copy the installer in your Titanfall 2 directory.
-- Run it. It will download and install the latest version of [Northstar](https://github.com/R2Northstar/Northstar).
+- Run the installer. It will download and install the latest version of [Northstar](https://github.com/R2Northstar/Northstar).
+- Run `NorthstarLauncher.exe` to play. (make a shortcut if needed)
 - Enjoy !
 
 ## Why FlashLight
