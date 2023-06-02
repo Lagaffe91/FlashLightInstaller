@@ -5,6 +5,8 @@
 #include <sstream>
 #include <vector>
 
+#include "miniz/miniz.h"
+
 /// <summary>
 /// Use GitHub api to retrive the direct link to the latest release of NorthStar.
 /// </summary>
