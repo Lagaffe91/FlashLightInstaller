@@ -19,25 +19,25 @@ std::string GetDownloadURL()
 
 	DWORD stringSize = streamStats.cbSize.LowPart;
 
-	std::string htmlStr;
+	std::string resultStr;
 
-	htmlStr.reserve(stringSize);
-	htmlStr.resize(stringSize);
+	resultStr.reserve(stringSize);
+	resultStr.resize(stringSize);
 
 	DWORD byteCount;
 
-	fileStream->Read(&htmlStr[0], stringSize, &byteCount);
+	fileStream->Read(&resultStr[0], stringSize, &byteCount);
 	fileStream->Release();
 
 	constexpr int searchStrSize = 23;
-	int urlOffset	= htmlStr.find("\"browser_download_url\":") + searchStrSize;
-	int urlStrSize  = (htmlStr.find(".zip\"", urlOffset) - urlOffset) + 4 ; // 4 -> ".zip"
+	int urlOffset	= resultStr.find("\"browser_download_url\":") + searchStrSize + 1; //+ 1 to remove the extra " character
+	int urlStrSize  = (resultStr.find(".zip\"", urlOffset) - urlOffset) + 4 ; // 4 -> ".zip"
 	
-	return htmlStr.substr(urlOffset, urlStrSize);
+	return resultStr.substr(urlOffset, urlStrSize);
 }
 
 /// <summary>
-/// Download and write the file at url pFileURL onto the disk.
+/// Download and write the file from pFileURL url onto the disk.
 /// </summary>
 /// <param name="pFileURL"> : Url of the desired file.</param>
 void DownloadFile(const std::string& pFileURL)
@@ -54,8 +54,8 @@ void DownloadFile(const std::string& pFileURL)
 
 	fileStream->Stat(&streamStats, STATFLAG_DEFAULT);
 
-	DWORD byteCount;								//Out variable for windows, will not be used
-	DWORD fileSize = streamStats.cbSize.LowPart;	//Will never have to use the high part.
+	DWORD byteCount;
+	DWORD fileSize = streamStats.cbSize.LowPart;
 
 	std::vector<char> fileBuffer;
 	fileBuffer.reserve(fileSize);
@@ -64,7 +64,9 @@ void DownloadFile(const std::string& pFileURL)
 
 	fileStream->Release();
 	
-	//Get filename with PathStripPath(&wURL[0]);
+	//TODO :
+	//Get filename with :
+	//	PathStripPath(&wURL[0]);
 
 	HANDLE zipHandle = CreateFileA("./Northstar.release.v1.14.2.zip", GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
