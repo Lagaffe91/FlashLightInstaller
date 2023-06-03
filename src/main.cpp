@@ -39,6 +39,45 @@ std::string GetDownloadURL()
 	return resultStr.substr(urlOffset, urlStrSize);
 }
 
+//TODO : 
+// - Better memory managements
+// - Proprely extract the folders inside the archive
+void DecompressZIPFolder(mz_zip_archive* pArchive, int pFileCount)
+{
+	if (pFileCount <= 0 || !pArchive) return;
+
+	for (int i = 0; i < pFileCount; i++)
+	{
+
+		//if (mz_zip_reader_is_file_a_directory(pArchive, i)) 
+		//{
+			//Folder
+
+			//mz_extract
+		//}
+		//else
+		{
+			//File
+
+			mz_zip_archive_file_stat stats{};
+
+			mz_zip_reader_file_stat(pArchive, i, &stats);
+
+			void* fileData = mz_zip_reader_extract_file_to_heap(pArchive, stats.m_filename, &stats.m_uncomp_size, 0);
+
+
+			HANDLE fileHandle = CreateFileA(&stats.m_filename[0], GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			DWORD byteCount;
+
+			WriteFile(fileHandle, fileData, stats.m_uncomp_size, &byteCount, NULL);
+
+			CloseHandle(fileHandle);
+
+			delete fileData;
+		}
+	}
+}
+
 /// <summary>
 /// Download and write the file from pFileURL url onto the disk.
 /// </summary>
@@ -76,6 +115,16 @@ void DownloadFile(const std::string& pFileURL)
 	WriteFile(zipHandle, fileBuffer.data(), fileSize, &byteCount, NULL);
 
 	CloseHandle(zipHandle);
+
+	mz_zip_archive archive{};
+
+	mz_zip_reader_init_file(&archive, fileName.c_str(), 0);
+
+	const int fileCount = mz_zip_reader_get_num_files(&archive);
+
+	DecompressZIPFolder(&archive, fileCount);
+
+	mz_zip_reader_end(&archive);
 
 }
 
