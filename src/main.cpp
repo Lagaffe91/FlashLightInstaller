@@ -53,28 +53,12 @@ void DecompressZIPFolder(mz_zip_archive* pArchive)
 		mz_zip_archive_file_stat stats{};
 		mz_zip_reader_file_stat(pArchive, i, &stats);
 
+		const bool isDirectory = mz_zip_reader_is_file_a_directory(pArchive, i);
 
-		if (mz_zip_reader_is_file_a_directory(pArchive, i))
-		{
-			//Directory
+		if (isDirectory)
 			CreateDirectoryA(stats.m_filename, NULL);
-		}
 		else
-		{
-			//File
-
-			void* fileData = mz_zip_reader_extract_file_to_heap(pArchive, stats.m_filename, &stats.m_uncomp_size, 0);
-
-			HANDLE fileHandle = CreateFileA(&stats.m_filename[0], GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-			DWORD byteCount;
-
-			WriteFile(fileHandle, fileData, (DWORD)stats.m_uncomp_size, &byteCount, NULL);
-
-			CloseHandle(fileHandle);
-
-			delete fileData;
-		}
+			mz_zip_reader_extract_to_file(pArchive, i, stats.m_filename, 0);
 	}
 }
 
