@@ -10,9 +10,34 @@
 
 #include "FlashLightInstaller.hpp"
 
+//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	}
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
 void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
+	const wchar_t CLASS_NAME[] = L"FlashlightInstaller";
 
+	WNDCLASS wc = { };
+
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = CLASS_NAME;
+
+	RegisterClass(&wc);
+
+	mWindow.hwnd = CreateWindowEx(0, CLASS_NAME, mWindow.title, 0, CW_USEDEFAULT, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	ShowWindow(mWindow.hwnd, nCmdShow);
 }
 
 ///Run the entire installation process : Parse the url to the latest release, then download and extract the archive.
@@ -26,6 +51,8 @@ void FlashlightInstaller::RunInstallation()
 /// Use GitHub api to retrive the direct link to the latest release of NorthStar.
 void FlashlightInstaller::GetDownloadURL(NorthStarArchive* pArchive)	const
 {
+	SetWindowText(mWindow.hwnd, L"Parsing URL");
+
 	IStream* fileStream;
 
 	DWORD byteCount;
@@ -64,6 +91,8 @@ void FlashlightInstaller::GetDownloadURL(NorthStarArchive* pArchive)	const
 /// Download and write the zip file from pFileURL url onto the disk.
 void FlashlightInstaller::DownloadArchive(NorthStarArchive* pArchive)	const
 {
+	SetWindowText(mWindow.hwnd, L"Downloading Latest Northstar Release");
+	
 	std::wstring wURL;
 
 	IStream* fileStream;
@@ -112,6 +141,8 @@ void FlashlightInstaller::DownloadArchive(NorthStarArchive* pArchive)	const
 ///Extract the archive to the disk
 void FlashlightInstaller::ExtractArchive(NorthStarArchive* pArchive)	const
 {
+	SetWindowText(mWindow.hwnd, L"Extracting archive");
+
 	mz_zip_archive archive;
 
 	memset(&archive, 0, sizeof(mz_zip_archive));
