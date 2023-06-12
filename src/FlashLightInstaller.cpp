@@ -12,7 +12,6 @@
 
 #include "FlashLightInstaller.hpp"
 
-//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -31,6 +30,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+//TODO :
+// - Find a more elegant way to init the two windows
 void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
 	const wchar_t CLASS_NAME[] = L"FlashlightInstaller";
@@ -42,19 +43,21 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	wc.lpszClassName = CLASS_NAME;
 
 	RECT rcClient;
-	int scrollHeight;
 
+	const int scrollHeight = GetSystemMetrics(SM_CYVSCROLL);
+
+	const int scWidth	= GetSystemMetrics(SM_CXSCREEN);
+	const int scHeight	= GetSystemMetrics(SM_CYSCREEN);
+	
 	RegisterClass(&wc);
 
-	scrollHeight = GetSystemMetrics(SM_CYVSCROLL);
-
-	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
-	
 	InitCommonControls();
 
+	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPEDWINDOW, scWidth/2 - mWindow.width/2, scHeight / 2 - mWindow.height / 2, mWindow.width, mWindow.height, NULL, NULL, hInstance, NULL);
+	
 	GetClientRect(mWindow.hwnd, &rcClient);
 
-	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, mWindow.hwnd, (HMENU)0, hInstance, NULL);
+	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 16), rcClient.top, rcClient.right - (rcClient.right / 16) * 2, rcClient.bottom/5, mWindow.hwnd, (HMENU)0, hInstance, NULL);
 
 	ShowWindow(mWindow.hwnd, nCmdShow);
 

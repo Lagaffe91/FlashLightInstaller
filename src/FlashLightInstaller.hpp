@@ -12,12 +12,21 @@ public:
 
 private:
 
+	//TODO : 
+	//	- Find something more elegant than hardcoded parameters
 	typedef struct FlashlightWindow_
 	{
-		HWND hwnd			= NULL;
+		//-------- Main window --------
+		HWND hwnd				= NULL;
+
+		LPCWSTR title = L"FlashlightInstaller";
+
+		const int width		= 1000;
+		const int height	= 100;
+
+		//-------- Progress bar -------- 
 		HWND hwndPB			= NULL;
 
-		LPCWSTR title	= L"FlashlightInstaller";
 	}FlashlightWindow;
 
 	typedef struct NorthStarArchive_
