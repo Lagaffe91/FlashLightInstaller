@@ -14,7 +14,9 @@ private:
 
 	typedef struct FlashlightWindow_
 	{
-		HWND hwnd		= NULL;
+		HWND hwnd			= NULL;
+		HWND hwndPB			= NULL;
+
 		LPCWSTR title	= L"FlashlightInstaller";
 	}FlashlightWindow;
 

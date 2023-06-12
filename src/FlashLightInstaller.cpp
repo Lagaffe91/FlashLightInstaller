@@ -2,6 +2,8 @@
 #include <urlmon.h>
 #include <shlwapi.h>
 
+#include <commctrl.h>
+
 #include <string>
 
 #include <vector>
@@ -20,6 +22,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
+	case WM_PAINT:
+	{
+		return 0;
+	}
+
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
@@ -34,10 +41,25 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	wc.hInstance = hInstance;
 	wc.lpszClassName = CLASS_NAME;
 
+	RECT rcClient;
+	int scrollHeight;
+
 	RegisterClass(&wc);
 
-	mWindow.hwnd = CreateWindowEx(0, CLASS_NAME, mWindow.title, 0, CW_USEDEFAULT, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	scrollHeight = GetSystemMetrics(SM_CYVSCROLL);
+
+	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	
+	InitCommonControls();
+
+	GetClientRect(mWindow.hwnd, &rcClient);
+
+	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, mWindow.hwnd, (HMENU)0, hInstance, NULL);
+
 	ShowWindow(mWindow.hwnd, nCmdShow);
+
+	SendMessage(mWindow.hwndPB, PBM_SETRANGE, 0, MAKELPARAM(0, 4));
+	SendMessage(mWindow.hwndPB, PBM_SETSTEP, (WPARAM)1, 0);
 }
 
 ///Run the entire installation process : Parse the url to the latest release, then download and extract the archive.
@@ -52,6 +74,7 @@ void FlashlightInstaller::RunInstallation()
 void FlashlightInstaller::GetDownloadURL(NorthStarArchive* pArchive)	const
 {
 	SetWindowText(mWindow.hwnd, L"Parsing URL");
+	SendMessage(mWindow.hwndPB, PBM_STEPIT, 0, 0);
 
 	IStream* fileStream;
 
@@ -92,7 +115,8 @@ void FlashlightInstaller::GetDownloadURL(NorthStarArchive* pArchive)	const
 void FlashlightInstaller::DownloadArchive(NorthStarArchive* pArchive)	const
 {
 	SetWindowText(mWindow.hwnd, L"Downloading Latest Northstar Release");
-	
+	SendMessage(mWindow.hwndPB, PBM_STEPIT, 0, 0);
+
 	std::wstring wURL;
 
 	IStream* fileStream;
@@ -142,6 +166,7 @@ void FlashlightInstaller::DownloadArchive(NorthStarArchive* pArchive)	const
 void FlashlightInstaller::ExtractArchive(NorthStarArchive* pArchive)	const
 {
 	SetWindowText(mWindow.hwnd, L"Extracting archive");
+	SendMessage(mWindow.hwndPB, PBM_STEPIT, 0, 0);
 
 	mz_zip_archive archive;
 
@@ -154,10 +179,14 @@ void FlashlightInstaller::ExtractArchive(NorthStarArchive* pArchive)	const
 	if (fileCount <= 0)
 		return;
 
+	SendMessage(mWindow.hwndPB, PBM_SETRANGE, 0, MAKELPARAM(0, fileCount));
+
 	mz_zip_archive_file_stat stats;
 
 	for (int i = 0; i < fileCount; i++)
 	{
+		SendMessage(mWindow.hwndPB, PBM_STEPIT, 0, 0);
+
 		memset(&stats, 0, sizeof(mz_zip_archive_file_stat));
 		mz_zip_reader_file_stat(&archive, i, &stats);
 
