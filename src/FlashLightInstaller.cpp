@@ -55,7 +55,7 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	InitCommonControls();
 
 	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPED | WS_SYSMENU, scWidth/2 - mWindow.width/2, scHeight / 2 - mWindow.height / 2, mWindow.width, mWindow.height, NULL, NULL, hInstance, NULL);
-	
+
 	GetClientRect(mWindow.hwnd, &rcClient);
 
 	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 20), rcClient.top + (rcClient.bottom / 4), rcClient.right - (rcClient.right / 20) * 2, rcClient.bottom/4, mWindow.hwnd, NULL, hInstance, NULL);
