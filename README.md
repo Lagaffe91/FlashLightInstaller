@@ -9,6 +9,7 @@ Lightweight installer for the Northstar Launcher made with the win32 api.
 ## STATUS
 
 Installer is working. Succesfully download and extract the latest release of Northstar.
+
 A basic GUI is displayed to show the status of the installation.
 
 ## Usage
