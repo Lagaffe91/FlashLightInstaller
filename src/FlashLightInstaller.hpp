@@ -45,6 +45,9 @@ public:
 	///Run the entire installation process : Parse the url to the latest release, then download and extract the archive.
 	void RunInstallation();
 
+	///Run windows message loop for the main window
+	void RunMessageLoop();
+
 private:
 
 	/// Use GitHub api to retrive the direct link to the latest release of NorthStar.

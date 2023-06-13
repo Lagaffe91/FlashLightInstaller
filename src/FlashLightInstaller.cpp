@@ -5,7 +5,7 @@
 #include <commctrl.h>
 
 #include <string>
-
+#include <thread>
 #include <vector>
 
 #include "miniz/miniz.h"
@@ -57,7 +57,7 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	
 	GetClientRect(mWindow.hwnd, &rcClient);
 
-	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 16), rcClient.top, rcClient.right - (rcClient.right / 16) * 2, rcClient.bottom/5, mWindow.hwnd, (HMENU)0, hInstance, NULL);
+	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 16), rcClient.top + (rcClient.bottom / 2), rcClient.right - (rcClient.right / 16) * 2, rcClient.bottom/5, mWindow.hwnd, (HMENU)0, hInstance, NULL);
 
 	ShowWindow(mWindow.hwnd, nCmdShow);
 
@@ -68,9 +68,20 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 ///Run the entire installation process : Parse the url to the latest release, then download and extract the archive.
 void FlashlightInstaller::RunInstallation()
 {
+
 	this->GetDownloadURL(&mArchive);
 	this->DownloadArchive(&mArchive);
 	this->ExtractArchive(&mArchive);
+}
+
+void FlashlightInstaller::RunMessageLoop()
+{
+	MSG msg = { };
+	while (GetMessage(&msg, NULL, 0, 0) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 /// Use GitHub api to retrive the direct link to the latest release of NorthStar.
@@ -202,4 +213,7 @@ void FlashlightInstaller::ExtractArchive(NorthStarArchive* pArchive)	const
 	}
 
 	mz_zip_reader_end(&archive);
+
+	SendMessage(mWindow.hwndPB, PBM_SETRANGE, 0, MAKELPARAM(0, 0));
+	SetWindowText(mWindow.hwnd, L"Installation Completed");
 }

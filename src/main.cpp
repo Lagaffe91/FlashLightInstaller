@@ -1,5 +1,7 @@
 #include <Windows.h>
 
+#include <thread>
+
 #include "FlashLightInstaller.hpp"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
@@ -7,7 +9,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	FlashlightInstaller installer;
 
 	installer.InitWindow(hInstance, nCmdShow);
-	installer.RunInstallation();
+
+	std::thread installThread (&FlashlightInstaller::RunInstallation, &installer);
+
+	installer.RunMessageLoop();
+
+	installThread.join();
 
 	return 0;
 }
