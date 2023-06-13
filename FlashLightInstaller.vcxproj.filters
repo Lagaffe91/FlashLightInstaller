@@ -24,10 +24,29 @@
     <ClCompile Include="include\miniz\miniz.c">
       <Filter>Fichiers d%27en-tête\miniz</Filter>
     </ClCompile>
+    <ClCompile Include="src\FlashLightInstaller.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\miniz\miniz.h">
       <Filter>Fichiers d%27en-tête\miniz</Filter>
     </ClInclude>
+    <ClInclude Include="src\FlashLightInstaller.hpp">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FlashLightInstaller.rc">
+      <Filter>Fichiers de ressources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\flashlight_icon_256.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
   </ItemGroup>
 </Project>
