@@ -27,11 +27,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
-	case WM_PAINT:
-	{
-		return 0;
-	}
-
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
@@ -59,11 +54,11 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 	InitCommonControls();
 
-	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPEDWINDOW, scWidth/2 - mWindow.width/2, scHeight / 2 - mWindow.height / 2, mWindow.width, mWindow.height, NULL, NULL, hInstance, NULL);
+	mWindow.hwnd	= CreateWindowEx(0, CLASS_NAME, mWindow.title, WS_OVERLAPPED | WS_SYSMENU, scWidth/2 - mWindow.width/2, scHeight / 2 - mWindow.height / 2, mWindow.width, mWindow.height, NULL, NULL, hInstance, NULL);
 	
 	GetClientRect(mWindow.hwnd, &rcClient);
 
-	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 16), rcClient.top + (rcClient.bottom / 2), rcClient.right - (rcClient.right / 16) * 2, rcClient.bottom/5, mWindow.hwnd, NULL, hInstance, NULL);
+	mWindow.hwndPB	= CreateWindowEx(0, PROGRESS_CLASS, NULL, WS_CHILD | WS_VISIBLE, rcClient.left + (rcClient.right / 20), rcClient.top + (rcClient.bottom / 4), rcClient.right - (rcClient.right / 20) * 2, rcClient.bottom/4, mWindow.hwnd, NULL, hInstance, NULL);
 
 	ShowWindow(mWindow.hwnd, nCmdShow);
 
