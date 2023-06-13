@@ -4,7 +4,7 @@
 
 # FlashLightInstaller
 
-Lightweight installer for the Northstar Launcher made with the win32 api.
+Lightweight installer for the Northstar Launcher made with the windows api.
 
 ## STATUS
 
