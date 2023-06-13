@@ -12,6 +12,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <thread>
 #include <vector>
 
+#include "../resource.h"
+
 #include "miniz/miniz.h"
 
 #include "FlashLightInstaller.hpp"
@@ -39,9 +41,12 @@ void FlashlightInstaller::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 	WNDCLASS wc = { };
 
+	HICON appIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
 	wc.lpszClassName = CLASS_NAME;
+	wc.hIcon = appIcon;
 
 	RECT rcClient;
 
