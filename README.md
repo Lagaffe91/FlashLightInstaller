@@ -6,6 +6,10 @@
 
 Lightweight installer for the Northstar Launcher made with the windows api.
 
+### Screenshot
+
+![](https://cdn.discordapp.com/attachments/693148866001764372/1121139333982859324/5cnEeIv.png)
+
 ## STATUS
 
 Installer is working. Succesfully download and extract the latest release of Northstar.
