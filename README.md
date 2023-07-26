@@ -33,7 +33,7 @@ To install or Update Northstar :
 
 I just wanted my own installer for my personal use. Something stripped out to the bare minumum.
 
-You can try to use this at your own risks, i recomand you checking out other launcher such as [viper](https://github.com/0neGal/viper) or [VTOL](https://github.com/R2NorthstarTools/VTOL) if you are not sure on what to use.
+You can try to use this at your own risks, i recomand you checking out other launcher such as [FlightCore](https://github.com/R2NorthstarTools/FlightCore) or [VTOL](https://github.com/R2NorthstarTools/VTOL) if you are not sure on what to use.
 
 ## Building
 
